@@ -227,7 +227,7 @@ public class BattInfoActivity extends Activity {
         //m_BattInfoObserver.startObserving("SUBSYSTEM=switch");
         saveBattInfo();
         txtBatt.setText(strBatt);
-        txtInfo.setText("OK");
+        //txtInfo.setText("OK");
     }
 
     @Override

@@ -3,5 +3,5 @@
     <string name="hello">Hello World, BattInfoActivity!</string>
     <string name="app_name">BattInfo</string>
     <string name="batt_tip">ID, name, len: raw_data</string>
-    <string name="info_tip">No data available</string>
+    <string name="info_tip">data file: /data/data/com.mitac.battinfo/battinfo</string>
 </resources>

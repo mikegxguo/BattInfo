@@ -4,6 +4,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/info_tip"
+        android:textSize="15sp"/>
 
     <ScrollView
         android:id="@+id/scrollView1"
@@ -23,10 +29,4 @@
         </LinearLayout>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/info"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/info_tip"
-        android:textSize="15sp"/>
 </LinearLayout>
