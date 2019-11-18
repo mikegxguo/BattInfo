@@ -3,11 +3,8 @@ package com.mitac.battinfo;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-//import android.os.Handler;
-//import android.os.Message;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-//import android.os.UEventObserver;
 import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,52 +22,7 @@ public class BattInfoActivity extends Activity {
     TextView txtInfo;
     LinearLayout tipBack;
     private String strBatt = null;
-/*
-    private static int cntAttach = 0;
-    private static int cntDettach = 0;
 
-    private static final int MSG_REFRESH = 0x1245;
-
-    private Handler hRefresh = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_REFRESH:
-                if (txtBatt != null) {
-                    txtBatt.setText("Attach: " + cntAttach);
-                }
-                if (txtInfo != null) {
-                    txtInfo.setText("Dettach: " + cntDettach);
-                }
-                if (tipBack != null && cntDettach>0) {
-                    tipBack.setBackgroundColor(Color.RED);
-                }
-                break;
-            default:
-                break;
-            }
-        }
-    };
-
-    private UEventObserver m_BattInfoObserver = new UEventObserver() {
-        @Override
-        public void onUEvent(UEvent event) {
-            Log.d(TAG, "Event: " + event);
-            boolean bBattInfo = "dock".equals(event.get("SWITCH_NAME")) ? true:false;
-            if (bBattInfo) {
-                String status = event.get("SWITCH_STATE");
-                if ("1".equals(status)) {
-                    Log.d(TAG, "BattInfo is attached.");
-                    cntAttach += 1;
-                } else if ("0".equals(status)) {
-                    Log.d(TAG, "BattInfo is dettached.");
-                    cntDettach += 1;
-                }
-                hRefresh.sendEmptyMessage(MSG_REFRESH);
-            }
-        }
-    };
-*/
     public static int byte2Int(byte[] b) {
         int s = 0;
         int s0 = b[0] & 0xff;
@@ -543,7 +495,7 @@ public class BattInfoActivity extends Activity {
             if(!outFile.exists()) {
                 outFile.createNewFile();
             }
-            Log.e(TAG,"1111111111111111111111111111111111111111111111111 ");
+            //Log.e(TAG,"1111111111111111111111111111111111111111111111111 ");
             reader = new FileInputStream(inFile);
             writer = new FileOutputStream(outFile);
             //Copy data and save it
@@ -551,7 +503,7 @@ public class BattInfoActivity extends Activity {
                 Log.e(TAG, "read, count: "+count);
                 writer.write(buf, 0, count);
             }
-            Log.e(TAG,"2222222222222222222222222222222222222222222222222 ");
+            //Log.e(TAG,"2222222222222222222222222222222222222222222222222 ");
 
             //parse data
             parseBattData(buf);
@@ -580,17 +532,14 @@ public class BattInfoActivity extends Activity {
         txtInfo = (TextView) findViewById(R.id.info);
         tipBack = (LinearLayout) findViewById(R.id.background);
         Log.d(TAG, "onCreate");
-        //m_BattInfoObserver.startObserving("SUBSYSTEM=switch");
         saveBattInfo();
         txtBatt.setText(strBatt);
-        //txtInfo.setText("OK");
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        //hRefresh.sendEmptyMessage(MSG_REFRESH);
     }
 
     @Override
@@ -603,6 +552,5 @@ public class BattInfoActivity extends Activity {
     public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop");
-        //m_BattInfoObserver.stopObserving();
     }
 }
