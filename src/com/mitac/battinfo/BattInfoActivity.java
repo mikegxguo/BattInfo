@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
+import java.io.StringReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -515,6 +519,42 @@ public class BattInfoActivity extends Activity {
         return true;
     }
 
+    public static boolean string2File(String res, String filePath) {
+        boolean flag = true;
+        BufferedReader bufferedReader = null;
+        BufferedWriter bufferedWriter = null;
+        try {
+            File distFile = new File(filePath);
+            if (!distFile.getParentFile().exists()) {
+                distFile.getParentFile().mkdirs();
+            }
+
+            bufferedReader = new BufferedReader(new StringReader(res));
+            bufferedWriter = new BufferedWriter(new FileWriter(distFile));
+            char buf[] = new char[1024];
+            int len;
+            while ((len = bufferedReader.read(buf)) != -1) {
+                bufferedWriter.write(buf, 0, len);
+            }
+            bufferedWriter.flush();
+            bufferedReader.close();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            flag = false;
+            return flag;
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return flag;
+    }
+
     private boolean saveBattInfo() {
         boolean ret = false;
         byte [] buf = new byte[4*1024];
@@ -525,9 +565,14 @@ public class BattInfoActivity extends Activity {
             buf[i] = 0x0;
         }
         File inFile = new File("/sys/sys_info/battery_info");//Total size: 3264 bytes
-        File outFile = new File("/data/data/com.mitac.battinfo/battinfo");
+        File outFile = new File("/sdcard/battery_info/batt.bin");
+        String txtPath = "/sdcard/battery_info/batt.txt";
 
         try {
+            if (!outFile.getParentFile().exists()) {
+                outFile.getParentFile().mkdirs();
+            }
+            //Log.e(TAG,"0000000000000000000000000000000000000000000000000 ");
             if(!outFile.exists()) {
                 outFile.createNewFile();
             }
@@ -543,6 +588,8 @@ public class BattInfoActivity extends Activity {
 
             //parse data
             parseBattData(buf);
+            //transfer the string to file stream
+            string2File(strBatt, txtPath);
         } catch (IOException ex) {
             Log.e(TAG,"Couldn't write the content: " + ex);
         } catch (NumberFormatException ex) {
