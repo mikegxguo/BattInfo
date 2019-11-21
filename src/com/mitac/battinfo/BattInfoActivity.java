@@ -44,6 +44,8 @@ public class BattInfoActivity extends Activity {
 
     public static String bytes2Dec(byte[] bytes, int start, int len) {
         StringBuffer sb = new StringBuffer();
+        //byte int8 = 0;
+        short int16 = 0;
         int temp = 0;
         int temp0 = 0;
         int temp1 = 0;
@@ -51,24 +53,24 @@ public class BattInfoActivity extends Activity {
         int temp3 = 0;
         sb.append("    "); //TODO: the blank is friendly for user.
         if(len == 1) { //One byte
-            temp0 = bytes[start] & 0xFF;
+            temp0 = bytes[start] & 0xff;
             sb.append(temp0);
         } else if(len == 2) {//Short
-            temp0 = bytes[start] & 0xFF;
-            temp1 = bytes[start+1] & 0xFF;
-            temp = (temp0<<8)|temp1;
-            sb.append(temp);
+            temp0 = bytes[start] & 0xff;
+            temp1 = bytes[start+1] & 0xff;
+            int16 = (short)((temp0<<8)|temp1);
+            sb.append(int16);
         } else if(len == 4) {//Int
-            temp0 = bytes[start] & 0xFF;
-            temp1 = bytes[start+1] & 0xFF;
-            temp2 = bytes[start+2] & 0xFF;
-            temp3 = bytes[start+3] & 0xFF;
+            temp0 = bytes[start] ;
+            temp1 = bytes[start+1] ;
+            temp2 = bytes[start+2];
+            temp3 = bytes[start+3];
             temp = (temp0<<24)|(temp1<<16)|(temp2<<8)|temp3;
             sb.append(temp);
         } else {
             //TODO
         }
-        sb.append("\r\n");
+        //sb.append("\r\n");
         return sb.toString();
     }
 
@@ -82,6 +84,26 @@ public class BattInfoActivity extends Activity {
             e.printStackTrace();
         }
         return keyword;
+    }
+
+     public static String bytes2String(byte[] bytes, int start, int len) {
+        StringBuffer sb = new StringBuffer();
+        String str = null;
+        byte [] temp = new byte[20];
+       // sb.append("    "); //TODO: the blank is friendly for user.
+        //sb.append("");
+        System.arraycopy(bytes, start, temp, 0, len);
+            str = bytes2String(temp);
+        //for(int i = start; i < start+len; i++) {
+            //String hex = Integer.toHexString(bytes[i] & 0xFF);
+            //if(hex.length() < 2){
+                sb.append(str);
+            //}
+            //sb.append(hex.toUpperCase());
+            //sb.append(" ");
+        //}
+        sb.append("\r\n");
+        return sb.toString();
     }
 
 /*
@@ -160,305 +182,319 @@ public class BattInfoActivity extends Activity {
             StringBuilder detail = new StringBuilder();
             switch(id) {
                 case 2: //safety
-                detail.append("  ot_dsg_recovery: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  ot_dsg_time: ");
-                detail.append(bytes2Dec(raw_data, 2, 1));
-                detail.append("  ot_dsg: ");
-                detail.append(bytes2Dec(raw_data, 3, 2));
-                detail.append("  ot_chg_recovery: ");
-                detail.append(bytes2Dec(raw_data, 5, 2));
-                detail.append("  ot_chg_time: ");
-                detail.append(bytes2Dec(raw_data, 7, 1));
                 detail.append("  ot_chg: ");
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" 0.1℃\r\n  ot_chg_time: ");
+                detail.append(bytes2Dec(raw_data, 2, 1));
+                detail.append(" s\r\n  ot_chg_recovery: ");
+                detail.append(bytes2Dec(raw_data, 3, 2));
+                detail.append(" 0.1℃\r\n  ot_dsg: ");
+                detail.append(bytes2Dec(raw_data, 5, 2));
+                detail.append(" 0.1℃\r\n  ot_dsg_time: ");
+                detail.append(bytes2Dec(raw_data, 7, 1));
+                detail.append(" s\r\n  ot_dsg_recovery: ");
                 detail.append(bytes2Dec(raw_data, 8, 2));
+                detail.append(" 0.1℃\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 32: //inhibit cfg
-                detail.append("  temp_hys: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  chg_inhibit_temp_h: ");
-                detail.append(bytes2Dec(raw_data, 2, 2));
                 detail.append("  chg_inhibit_temp_l: ");
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" 0.1℃\r\n  chg_inhibit_temp_h: ");
+                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append(" 0.1℃\r\n  temp_hys: ");
                 detail.append(bytes2Dec(raw_data, 4, 2));
+                detail.append(" 0.1℃\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 34: //Battery charge data
-                detail.append("  charging_vol: ");
+                detail.append("  charging voltage: ");
                 detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" mV\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 36: //Battery charge termination data
-                detail.append("  dod_eoc_delta_t: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  fc_clear: ");
-                detail.append(bytes2Dec(raw_data, 2, 1));
-                detail.append("  fc_set: ");
-                detail.append(bytes2Dec(raw_data, 3, 1));
-                detail.append("  tca_clear: ");
-                detail.append(bytes2Dec(raw_data, 4, 1));
-                detail.append("  tca_set:");
-                detail.append(bytes2Dec(raw_data, 5, 1));
-                detail.append("  cur_taper_window: ");
-                detail.append(bytes2Dec(raw_data, 6, 1));
-                detail.append("  taper_vol: ");
-                detail.append(bytes2Dec(raw_data, 7, 2));
-                detail.append("  min_taper_cap: ");
-                detail.append(bytes2Dec(raw_data, 9, 2));
                 detail.append("  taper_cur: ");
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" mA\r\n  min taper capacity: ");
+                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append(" mAh\r\n  taper_vol: ");
+                detail.append(bytes2Dec(raw_data, 4, 2));
+                detail.append(" mV\r\n  cur_taper_window: ");
+                detail.append(bytes2Dec(raw_data, 6, 1));
+                detail.append(" s\r\n  tca_set:");
+                detail.append(bytes2Dec(raw_data, 7, 1));
+                detail.append(" %\r\n  tca_clear: ");
+                detail.append(bytes2Dec(raw_data, 8, 1));
+                detail.append(" %\r\n  fc_set: ");
+                detail.append(bytes2Dec(raw_data, 9, 1));
+                detail.append(" %\r\n  fc_clear: ");
+                detail.append(bytes2Dec(raw_data, 10, 1));
+                detail.append(" %\r\n  dod_eoc_delta_t: ");
                 detail.append(bytes2Dec(raw_data, 11, 2));
+                detail.append(" 0.1℃\r\n ");
                 strDetail = detail.toString();
                 break;
 
                 case 48: //Battery data FIXME: length:57, but read 38 bytes.
-                detail.append("  design_energy_scale: ");
-                detail.append(bytes2Dec(raw_data, 0, 1));
-                detail.append("  min_isd_time: ");
-                detail.append(bytes2Dec(raw_data, 1, 1));
-                detail.append("  isd_i_filter: ");
-                detail.append(bytes2Dec(raw_data, 2, 1));
-                detail.append("  isd_cur: ");
-                detail.append(bytes2Dec(raw_data, 3, 2));
-                detail.append("  tdd_soh_per: ");
-                detail.append(bytes2Dec(raw_data, 5, 1));
-                detail.append("  soh_load_i: ");
-                detail.append(bytes2Dec(raw_data, 6, 2));
-                detail.append("  design_energy: ");
-                detail.append(bytes2Dec(raw_data, 8, 2));
-                detail.append("  design_capacity: ");
-                detail.append(bytes2Dec(raw_data, 10, 2));
-                detail.append("  cc_threshold: ");
-                detail.append(bytes2Dec(raw_data, 12, 2));
-                detail.append("  cycle_count: ");
-                detail.append(bytes2Dec(raw_data, 14, 2));
-                detail.append("  reserved: ");
-                detail.append(bytes2Hex(raw_data, 16, 6));
-                detail.append("  initial_maxload: ");
-                detail.append(bytes2Dec(raw_data, 22, 2));
-                detail.append("  initial_standby: ");
-                detail.append(bytes2Dec(raw_data, 24, 1));
                 detail.append("  rem_cap_alarm: ");
-                detail.append(bytes2Dec(raw_data, 25, 1));
-                detail.append("  device_name: ");
-                detail.append(bytes2Hex(raw_data, 26, 12));
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" mA\r\n  initial_standby: ");
+                detail.append(bytes2Dec(raw_data, 8, 1));
+                detail.append(" mA\r\n  initial_maxload: ");
+                detail.append(bytes2Dec(raw_data, 9, 2));
+                detail.append(" mA\r\n  cycle_count: ");
+                detail.append(bytes2Dec(raw_data, 17, 2));
+                detail.append("\r\n  cc_threshold: ");
+                detail.append(bytes2Dec(raw_data, 19, 1));
+                detail.append(" mAh\r\n  design_capacity: ");
+                detail.append(bytes2Dec(raw_data, 23, 2));
+                detail.append(" mAh\r\n  design_energy: ");
+                detail.append(bytes2Dec(raw_data, 25, 2));
+                detail.append(" mWh\r\n  soh_load_i: ");
+                detail.append(bytes2Dec(raw_data, 27, 2));
+                detail.append(" %\r\n  tdd_soh_per: ");
+                detail.append(bytes2Dec(raw_data, 29, 1));
+                detail.append("\r\n  isd_cur: ");
+                detail.append(bytes2Dec(raw_data, 40, 2));
+                //detail.append("  reserved: ");
+               //detail.append(bytes2Hex(raw_data, 16, 6));
+                detail.append("\r\n  isd_i_filter: ");
+                detail.append(bytes2Dec(raw_data, 42, 1));
+                detail.append("\r\n  min_isd_time: ");
+                detail.append(bytes2Dec(raw_data, 43, 1));
+                detail.append(" h\r\n  design_energy_scale: ");
+                detail.append(bytes2Dec(raw_data, 44, 1));
+                detail.append("\r\n  device_name: ");
+                detail.append(bytes2String(raw_data, 45, 12));
                 strDetail = detail.toString();
                 break;
 
                 case 49: //Battery discharge
-                detail.append("  bh_clear_volt_threshold: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  bh_volt_time: ");
-                detail.append(bytes2Dec(raw_data, 2, 1));
-                detail.append("  bh_set_volt_threshold: ");
-                detail.append(bytes2Dec(raw_data, 3, 2));
-                detail.append("  bl_clear_volt_threshold: ");
-                detail.append(bytes2Dec(raw_data, 5, 2));
-                detail.append("  bl_set_volt_time: ");
-                detail.append(bytes2Dec(raw_data, 7, 1));
-                detail.append("  bl_set_volt_threshold: ");
-                detail.append(bytes2Dec(raw_data, 8, 2));
-                detail.append("  socf_clear_threshold: ");
-                detail.append(bytes2Dec(raw_data, 10, 2));
-                detail.append("  socf_set_threshold: ");
-                detail.append(bytes2Dec(raw_data, 12, 2));
-                detail.append("  soc1_clear_threshold: ");
-                detail.append(bytes2Dec(raw_data, 14, 2));
                 detail.append("  soc1_set_threshold: ");
-                detail.append(bytes2Dec(raw_data, 16, 2));
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" mAh\r\n  soc1_clear_threshold: ");
+                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append(" mAh\r\n  socf_set_threshold: ");
+                detail.append(bytes2Dec(raw_data, 4, 2));
+                detail.append(" mAh\r\n  socf_clear_threshold: ");
+                detail.append(bytes2Dec(raw_data, 6, 2));
+                detail.append(" mAh\r\n  bl_set_volt_threshold: ");
+                detail.append(bytes2Dec(raw_data, 9, 1));
+                detail.append(" mV\r\n  bl_set_volt_time: ");
+                detail.append(bytes2Dec(raw_data, 11, 1));
+                detail.append(" s\r\n  bl_clear_volt_threshold: ");
+                detail.append(bytes2Dec(raw_data, 12, 2));
+                detail.append(" mV\r\n  bh_set_volt_threshold: ");
+                detail.append(bytes2Dec(raw_data, 14, 2));
+                detail.append(" mV\r\n  bh_volt_time: ");
+                detail.append(bytes2Dec(raw_data, 16, 1));
+                detail.append(" s\r\n  bh_clear_volt_threshold: ");
+                detail.append(bytes2Dec(raw_data, 17, 2));
+                detail.append(" mV\r\n ");
                 strDetail = detail.toString();
                 break;
 
                 case 56: //Battery manufacturer data
-                detail.append("  df_cfg_ver: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  cell_revision: ");
-                detail.append(bytes2Dec(raw_data, 2, 2));
-                detail.append("  hardware_revision: ");
-                detail.append(bytes2Dec(raw_data, 4, 2));
-                detail.append("  firmware_ver: ");
-                detail.append(bytes2Dec(raw_data, 6, 2));
-                detail.append("  pcb_lot_code: ");
-                detail.append(bytes2Dec(raw_data, 8, 2));
                 detail.append("  pack_lot_code: ");
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append("\r\n  pcb_lot_code: ");
+                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append("\r\n  firmware_ver: ");
+                detail.append(bytes2Dec(raw_data, 4, 2));
+                detail.append("\r\n  hardware_revision: ");
+                detail.append(bytes2Dec(raw_data, 6, 2));
+                detail.append("\r\n  cell_revision: ");
+                detail.append(bytes2Dec(raw_data, 8, 2));
+                detail.append("\r\n  df_cfg_ver: ");
                 detail.append(bytes2Dec(raw_data, 10, 2));
+                detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 57: //Battery integrity data
                 detail.append("  chem_df_checksum: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(bytes2Hex(raw_data, 6, 2));
+                detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 59: //Battery lifetime data
-                detail.append("  max_dsg_cur: ");
+                detail.append("  max_temp:   ");
                 detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  max_chg_cur: ");
+                detail.append(" 0.1℃\r\n  min_temp:   ");
                 detail.append(bytes2Dec(raw_data, 2, 2));
-                detail.append("  min_pack_vol: ");
+                detail.append(" 0.1℃\r\n  max_pack_vol: ");
                 detail.append(bytes2Dec(raw_data, 4, 2));
-                detail.append("  max_pack_vol: ");
+                detail.append(" mV\r\n  min_pack_vol: ");
                 detail.append(bytes2Dec(raw_data, 6, 2));
-                detail.append("  min_temp: ");
+                detail.append(" mV\r\n  max_chg_cur:  ");
                 detail.append(bytes2Dec(raw_data, 8, 2));
-                detail.append("  max_temp: ");
+                detail.append(" mA\r\n  max_dsg_cur:  ");
                 detail.append(bytes2Dec(raw_data, 10, 2));
+                detail.append(" mA\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 60: // Battery lifetime temp samples data
                 detail.append("  lt_flash_cnt: ");
                 detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 64: // Battery registers data
-                detail.append("  pack_cfg_c: ");
-                detail.append(bytes2Dec(raw_data, 0, 1));
-                detail.append("  pack_cfg_b: ");
-                detail.append(bytes2Dec(raw_data, 1, 1));
                 detail.append("  pack_cfg: ");
-                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append("\r\n  pack_cfg_b: ");
+                detail.append(bytes2Dec(raw_data, 2, 1));
+                detail.append("\r\n  pack_cfg_c: ");
+                detail.append(bytes2Dec(raw_data, 3, 1));
+                detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 66: // Battery lifetime resolution data
-                detail.append("  lt_update_time: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  lt_cur_res: ");
+                detail.append("\r\n  lt_temp_res: ");
+                detail.append(bytes2Dec(raw_data, 0, 1));
+                detail.append("\r\n  lt_v_res: ");
+                detail.append(bytes2Dec(raw_data, 1, 1));
+                detail.append("\r\n  lt_cur_res: ");
                 detail.append(bytes2Dec(raw_data, 2, 1));
-                detail.append("  lt_v_res: ");
-                detail.append(bytes2Dec(raw_data, 3, 1));
-                detail.append("  lt_temp_res: ");
-                detail.append(bytes2Dec(raw_data, 4, 1));
+                detail.append("\r\n  lt_update_time: ");
+                detail.append(bytes2Dec(raw_data, 3, 2));
+                detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 68: // Battery power data
-                detail.append("  fs_wait: ");
-                detail.append(bytes2Dec(raw_data, 0, 1));
-                detail.append("  hiber_v: ");
-                detail.append(bytes2Dec(raw_data, 1, 2));
-                detail.append("  hiber_i: ");
-                detail.append(bytes2Dec(raw_data, 3, 2));
-                detail.append("  reserved: ");
-                detail.append(bytes2Hex(raw_data, 5, 7));
-                detail.append("  sleep_cur: ");
-                detail.append(bytes2Dec(raw_data, 12, 2));
                 detail.append("  flash_update_ok_vol: ");
-                detail.append(bytes2Dec(raw_data, 14, 2));
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" mV\r\n  sleep_cur: ");
+                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append(" mA\r\n  hiber_i: ");
+                detail.append(bytes2Dec(raw_data, 11, 2));
+                //detail.append("  reserved: ");
+                //detail.append(bytes2Hex(raw_data, 5, 7));
+                detail.append(" mA\r\n  hiber_v: ");
+                detail.append(bytes2Dec(raw_data, 13, 2));
+                detail.append(" mV\r\n  fs_wait: ");
+                detail.append(bytes2Dec(raw_data, 15, 1));
+                detail.append(" s\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 80: // Battery IT cfg data FIXME: 105, but read only 100 bytes
-                detail.append("  chg_hys_v_shift: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  fast_scale_start_soc: ");
-                detail.append(bytes2Dec(raw_data, 2, 1));
-                detail.append("  reserved1: ");
-                detail.append(bytes2Hex(raw_data, 3, 4));
-                detail.append("  delta_v_max_delta: ");
-                detail.append(bytes2Dec(raw_data, 7, 2));
-                detail.append("  qmax_max_delta: ");
-                detail.append(bytes2Dec(raw_data, 9, 1));
-                detail.append("  ra_max_delta: ");
-                detail.append(bytes2Dec(raw_data, 10, 2));
-                detail.append("  min_sim_rate: ");
-                detail.append(bytes2Dec(raw_data, 12, 1));
-                detail.append("  max_sim_rate: ");
-                detail.append(bytes2Dec(raw_data, 13, 1));
-                detail.append("  min_delta_v: ");
-                detail.append(bytes2Dec(raw_data, 14, 2));
-                detail.append("  max_delta_v: ");
-                detail.append(bytes2Dec(raw_data, 16, 2));
-                detail.append("  max_scale_back_grid: ");
-                detail.append(bytes2Dec(raw_data, 18, 1));
-                detail.append("  reserve_energy: ");
-                detail.append(bytes2Dec(raw_data, 19, 2));
-                detail.append("  reserve_cap_mah: ");
-                detail.append(bytes2Dec(raw_data, 21, 2));
-                detail.append("  user_rate_pwr: ");
-                detail.append(bytes2Dec(raw_data, 23, 2));
-                detail.append("  user_rate_ma: ");
-                detail.append(bytes2Dec(raw_data, 25, 2));
-                detail.append("  restrelax_time: ");
-                detail.append(bytes2Dec(raw_data, 27, 2));
-                detail.append("  term_v_delta: ");
-                detail.append(bytes2Dec(raw_data, 29, 2));
-                detail.append("  term_vol: ");
-                detail.append(bytes2Dec(raw_data, 31, 2));
-                detail.append("  reserved2: ");
-                detail.append(bytes2Hex(raw_data, 33, 40));
-                detail.append("  ra_filter: ");
-                detail.append(bytes2Dec(raw_data, 73, 2));
-                detail.append("  reserved3: ");
-                detail.append(bytes2Dec(raw_data, 75, 2));
-                detail.append("  min_res_factor: ");
-                detail.append(bytes2Dec(raw_data, 77, 1));
-                detail.append("  max_res_factor: ");
-                detail.append(bytes2Dec(raw_data, 78, 1));
-                detail.append("  reserved4: ");
-                detail.append(bytes2Hex(raw_data, 79, 19));
-                detail.append("  load_mode: ");
-                detail.append(bytes2Dec(raw_data, 98, 1));
                 detail.append("  load_select: ");
-                detail.append(bytes2Dec(raw_data, 99, 1));
+                detail.append(bytes2Dec(raw_data, 0, 1));
+                detail.append("\r\n  load_mode: ");
+                detail.append(bytes2Dec(raw_data, 1, 1));
+                //detail.append("  reserved1: ");
+                //detail.append(bytes2Hex(raw_data, 3, 4));
+                detail.append("\r\n  max_res_factor: ");
+                detail.append(bytes2Dec(raw_data, 21, 1));
+                detail.append("\r\n  min_res_factor: ");
+                detail.append(bytes2Dec(raw_data, 22, 1));
+                detail.append("\r\n  ra_filter: ");
+                detail.append(bytes2Dec(raw_data, 25, 2));
+                detail.append("\r\n  term_vol: ");
+                detail.append(bytes2Dec(raw_data, 67, 2));
+                detail.append(" mV\r\n  term_v_delta: ");
+                detail.append(bytes2Dec(raw_data, 69, 2));
+                detail.append(" mV\r\n  restrelax_time: ");
+                detail.append(bytes2Dec(raw_data, 72, 2));
+                detail.append(" s\r\n  user_rate_ma: ");
+                detail.append(bytes2Dec(raw_data, 76, 2));
+                detail.append(" mA\r\n  user_rate_pwr: ");
+                detail.append(bytes2Dec(raw_data, 78, 2));
+                detail.append(" mW\r\n  reserve_cap_mah: ");
+                detail.append(bytes2Dec(raw_data, 80, 2));
+                detail.append(" mA\r\n  reserve_energy: ");
+                detail.append(bytes2Dec(raw_data, 82, 2));
+                detail.append(" mAh\r\n  max_scale_back_grid: ");
+                detail.append(bytes2Dec(raw_data, 86, 1));
+                detail.append("\r\n  max_delta_v: ");
+                detail.append(bytes2Dec(raw_data, 87, 2));
+                detail.append("\r\n  min_delta_v: ");
+                detail.append(bytes2Dec(raw_data, 89, 2));
+                detail.append("\r\n  max_sim_rate: ");
+                detail.append(bytes2Dec(raw_data, 91, 1));
+                detail.append("\r\n  min_sim_rate: ");
+                detail.append(bytes2Dec(raw_data, 92, 1));
+                //detail.append("\r\n  reserved2: ");
+                //detail.append(bytes2Hex(raw_data, 33, 40));
+                detail.append("\r\n  ra_max_delta: ");
+                detail.append(bytes2Dec(raw_data, 93, 2));
+               // detail.append("\r\n  reserved3: ");
+                //detail.append(bytes2Dec(raw_data, 75, 2));
+                detail.append("\r\n  qmax_max_delta: ");
+                detail.append(bytes2Dec(raw_data, 95, 1));
+                detail.append("\r\n  delta_v_max_delta: ");
+                detail.append(bytes2Dec(raw_data, 96, 1));
+                //detail.append("\r\n  reserved4: ");
+                //detail.append(bytes2Hex(raw_data, 79, 19));
+                detail.append("\r\n  fast_scale_start_soc: ");
+                detail.append(bytes2Dec(raw_data, 102, 1));
+                detail.append(" %\r\n  chg_hys_v_shift: ");
+                detail.append(bytes2Dec(raw_data, 103, 2));
+                detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 81: // Battery current thresholds  data
-                detail.append("  max_ir_correct: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  quit_relax_time: ");
-                detail.append(bytes2Dec(raw_data, 2, 1));
-                detail.append("  chg_relax_time: ");
-                detail.append(bytes2Dec(raw_data, 3, 1));
-                detail.append("  dsg_relax_time: ");
-                detail.append(bytes2Dec(raw_data, 4, 2));
-                detail.append("  quit_current: ");
-                detail.append(bytes2Dec(raw_data, 6, 2));
-                detail.append("  chg_cur_threshold: ");
-                detail.append(bytes2Dec(raw_data, 8, 2));
                 detail.append("  dsg_cur_threshold: ");
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" mA\r\n  chg_cur_threshold: ");
+                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append(" mA\r\n  quit_current: ");
+                detail.append(bytes2Dec(raw_data, 4, 2));
+                detail.append(" mA\r\n  dsg_relax_time: ");
+                detail.append(bytes2Dec(raw_data, 6, 2));
+                detail.append(" s\r\n  chg_relax_time: ");
+                detail.append(bytes2Dec(raw_data, 8, 1));
+                detail.append(" s\r\n  quit_relax_time: ");
+                detail.append(bytes2Dec(raw_data, 9, 1));
+                detail.append(" s\r\n  max_ir_correct: ");
                 detail.append(bytes2Dec(raw_data, 10, 2));
+                detail.append(" mV\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 82: // Battery state  data
-                detail.append("  t_time_constant: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
-                detail.append("  t_rise: ");
-                detail.append(bytes2Dec(raw_data, 2, 2));
-                detail.append("  reserved: ");
-                detail.append(bytes2Hex(raw_data, 4, 2));
-                detail.append("  delta_vol: ");
-                detail.append(bytes2Dec(raw_data, 6, 2));
-                detail.append("  avg_p_last_run: ");
-                detail.append(bytes2Dec(raw_data, 8, 2));
-                detail.append("  avg_i_last_run: ");
-                detail.append(bytes2Dec(raw_data, 10, 2));
-                detail.append("  v_at_chg_term: ");
-                detail.append(bytes2Dec(raw_data, 12, 2));
-                detail.append("  update_status: ");
-                detail.append(bytes2Dec(raw_data, 14, 1));
-                detail.append("  cycle_count: ");
-                detail.append(bytes2Dec(raw_data, 15, 2));
                 detail.append("  qmax_cell_0: ");
+                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(" mAh\r\n  cycle_count: ");
+                detail.append(bytes2Dec(raw_data, 2, 2));
+                detail.append("\r\n  update_status: ");
+                detail.append(bytes2Hex(raw_data, 4, 1));
+                detail.append("  v_at_chg_term: ");
+                detail.append(bytes2Dec(raw_data, 5, 2));
+                detail.append(" mV\r\n  avg_i_last_run: ");
+                detail.append(bytes2Dec(raw_data, 7, 2));
+                detail.append(" mA\r\n  avg_p_last_run: ");
+                detail.append(bytes2Dec(raw_data, 9, 2));
+                detail.append(" mW\r\n  delta_vol: ");
+                detail.append(bytes2Dec(raw_data, 11, 2));
+                detail.append(" mV\r\n  t_rise: ");
+                detail.append(bytes2Dec(raw_data, 15, 2));
+                detail.append("\r\n  t_time_constant: ");
                 detail.append(bytes2Dec(raw_data, 17, 2));
+                detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 case 83: // Battery OCV table data
                 detail.append("  chem_id: ");
-                detail.append(bytes2Dec(raw_data, 0, 2));
+                detail.append(bytes2Hex(raw_data, 0, 2));
+                //detail.append("\r\n");
                 strDetail = detail.toString();
                 break;
 
                 default:
-                strDetail = bytes2Hex(raw_data);
+                //strDetail = bytes2Hex(raw_data);
                 break;
             }
             // wrap up one subclass data
